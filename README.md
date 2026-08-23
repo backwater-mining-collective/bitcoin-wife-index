@@ -12,7 +12,7 @@ A satirical, quantitatively rigorous real-time dashboard mapping live Bitcoin on
 
 The **Wife Index** (`wifeindex.com`) pulls real-time market and network data from public endpoints (Mempool.space, Alternative.me Fear & Greed, CoinGecko) and translates serious macroeconomic signals into domestic reality:
 
-* **Composite Wife Index Score (0–100):** Real-time weighted needle tracking marital tension vs. market momentum.
+* **Wife Index Score (0–100):** Real-time weighted needle tracking marital tension vs. market momentum.
 * **Garage Decibel & Heat Permit:** Computes fan noise tolerance vs. network hashprice economics ($/TH/day).
 * **Subpanel / Breaker Roulette:** Live continuous load calculation (Amps @ 240V) against NEC 80% continuous safety rules on a dedicated 50A garage subpanel.
 * **Hashrate Heating & Bill Offset:** Live thermal energy recovery credits against US average household heating baselines ($185/mo).

@@ -264,11 +264,48 @@
       width: 280px;
       height: 150px;
       margin: 1.25rem 0 0.5rem 0;
+      user-select: none;
+      touch-action: none;
     }
 
     .gauge-svg {
       width: 100%;
       height: 100%;
+      overflow: visible;
+      cursor: pointer;
+    }
+
+    .gauge-handle {
+      cursor: grab;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.85));
+      transition: transform 0.05s ease-out;
+    }
+
+    .gauge-handle:active {
+      cursor: grabbing;
+    }
+
+    .live-badge-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: rgba(224, 109, 59, 0.15);
+      border: 1px solid var(--accent-ember);
+      color: var(--accent-ember);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      padding: 0.25rem 0.65rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+    }
+
+    .live-badge-btn:hover {
+      background: rgba(224, 109, 59, 0.25);
+      box-shadow: 0 0 10px rgba(224, 109, 59, 0.35);
     }
 
     .gauge-score {
@@ -539,13 +576,21 @@
     <div class="hero-grid">
       <!-- Wife Index Main Dial -->
       <div class="card card-hero">
-        <div class="logo-subtitle" style="letter-spacing: 1.5px; color: var(--accent-timber);">Wife Index Score</div>
-        <div class="gauge-wrapper">
-          <svg class="gauge-svg" viewBox="0 0 200 110">
+        <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; position: relative;">
+          <div class="logo-subtitle" style="letter-spacing: 1.5px; color: var(--accent-timber); margin: 0;">Wife Index Score</div>
+          <button id="btn-hero-live" class="live-badge-btn" onclick="resetWifeScoreToLive()" title="Reset to Live Metric Score" style="display: none;">
+            <span style="display: inline-block; width: 6px; height: 6px; background: currentColor; border-radius: 50%;"></span>
+            <span>RESET</span>
+          </button>
+        </div>
+        <div class="gauge-wrapper" id="hero-gauge-container">
+          <svg class="gauge-svg" id="hero-gauge-svg" viewBox="0 0 200 110">
             <!-- Background Arc -->
             <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#120d09" stroke-width="16" stroke-linecap="round" />
             <!-- Active Colored Arc (Gradient) -->
             <path id="gauge-arc" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#gaugeGrad)" stroke-width="16" stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="100" />
+            <!-- Draggable White Thumb / Indicator -->
+            <circle id="gauge-thumb" class="gauge-handle" cx="20" cy="100" r="10" fill="#ffffff" stroke="#1c1611" stroke-width="3" />
             <defs>
               <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stop-color="#d32f2f" />
@@ -4788,6 +4833,8 @@
   }
 };
 
+    let userCustomWifeScore = null;
+    let latestLiveWifeScore = 50;
     let userCustomMonologue = null;
     let userCustomTarget = null;
     let userCustomCoffeeFee = null;
@@ -4833,6 +4880,121 @@
     function onSelectBigRig(val) {
       selectedBigRigKey = val;
       updateGarageMiningMetrics();
+    }
+
+    function resetWifeScoreToLive() {
+      userCustomWifeScore = null;
+      renderWifeScore(latestLiveWifeScore);
+      updateHeroLiveButton(false);
+    }
+
+    function setSimulatedWifeScore(score) {
+      const clamped = Math.max(0, Math.min(100, Math.round(score)));
+      userCustomWifeScore = clamped;
+      renderWifeScore(clamped);
+      updateHeroLiveButton(true);
+    }
+
+    function updateHeroLiveButton(isSimulated) {
+      const btn = document.getElementById('btn-hero-live');
+      if (!btn) return;
+      btn.style.display = isSimulated ? 'inline-flex' : 'none';
+    }
+
+    function renderWifeScore(score) {
+      const clamped = Math.max(0, Math.min(100, Math.round(score)));
+      
+      const wifeScoreNum = document.getElementById('wife-score-num');
+      if (wifeScoreNum) wifeScoreNum.textContent = clamped;
+      
+      const gaugeArc = document.getElementById('gauge-arc');
+      if (gaugeArc) {
+        const arcOffset = 251.2 - (251.2 * (clamped / 100));
+        gaugeArc.style.strokeDashoffset = arcOffset;
+      }
+
+      // Position draggable thumb along arc: angle from PI (score=0, left) to 0 (score=100, right)
+      const gaugeThumb = document.getElementById('gauge-thumb');
+      if (gaugeThumb) {
+        const angle = Math.PI - (clamped / 100) * Math.PI;
+        const cx = 100 + 80 * Math.cos(angle);
+        const cy = 100 - 80 * Math.sin(angle);
+        gaugeThumb.setAttribute('cx', cx.toFixed(2));
+        gaugeThumb.setAttribute('cy', cy.toFixed(2));
+      }
+
+      // Dynamic Status Copy based on score
+      const { tier: currentTier, vibe: currentVibe, sitrep: currentSitRep } = getIndexData(clamped);
+
+      const wifeScoreTier = document.getElementById('wife-score-tier');
+      if (wifeScoreTier) wifeScoreTier.textContent = currentTier.title;
+      
+      const wifeScoreDesc = document.getElementById('wife-score-desc');
+      if (wifeScoreDesc) wifeScoreDesc.textContent = currentVibe;
+      
+      const threatTitle = document.getElementById('threat-title');
+      if (threatTitle) threatTitle.textContent = currentTier.threat;
+      
+      const threatP1 = document.getElementById('threat-p1');
+      if (threatP1) threatP1.textContent = currentSitRep;
+      
+      const householdOrder = document.getElementById('household-order');
+      if (householdOrder) householdOrder.textContent = `"${currentTier.order}"`;
+    }
+
+    function initGaugeDragControls() {
+      const svg = document.getElementById('hero-gauge-svg');
+      if (!svg) return;
+      let isDragging = false;
+
+      function calculateScoreFromEvent(e) {
+        const rect = svg.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        
+        // Map client coordinates to SVG viewBox (0 0 200 110)
+        const svgX = ((clientX - rect.left) / rect.width) * 200;
+        const svgY = ((clientY - rect.top) / rect.height) * 110;
+        
+        const dx = svgX - 100;
+        const dy = 100 - svgY; // Invert Y so up is positive
+        
+        // Math.atan2(dy, dx): (-80, 0) is left (PI), (0, 80) is top (PI/2), (80, 0) is right (0)
+        let angle = Math.atan2(dy, dx);
+        if (angle < 0) {
+          angle = dx >= 0 ? 0 : Math.PI;
+        }
+        angle = Math.max(0, Math.min(Math.PI, angle));
+        
+        const score = Math.round((1 - (angle / Math.PI)) * 100);
+        return score;
+      }
+
+      function onStart(e) {
+        isDragging = true;
+        const score = calculateScoreFromEvent(e);
+        setSimulatedWifeScore(score);
+        e.preventDefault();
+      }
+
+      function onMove(e) {
+        if (!isDragging) return;
+        const score = calculateScoreFromEvent(e);
+        setSimulatedWifeScore(score);
+        e.preventDefault();
+      }
+
+      function onEnd() {
+        isDragging = false;
+      }
+
+      svg.addEventListener('mousedown', onStart);
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onEnd);
+
+      svg.addEventListener('touchstart', onStart, { passive: false });
+      window.addEventListener('touchmove', onMove, { passive: false });
+      window.addEventListener('touchend', onEnd);
     }
 
     function updatePowerRate(val) {
@@ -5955,33 +6117,16 @@
         (athFactor * 0.15)
       );
 
-      // Update Hero Gauge
-      const wifeScoreNum = document.getElementById('wife-score-num');
-      if (wifeScoreNum) wifeScoreNum.textContent = compositeScore;
-      
-      const gaugeArc = document.getElementById('gauge-arc');
-      if (gaugeArc) {
-        const arcOffset = 251.2 - (251.2 * (compositeScore / 100));
-        gaugeArc.style.strokeDashoffset = arcOffset;
+      latestLiveWifeScore = compositeScore;
+
+      // Update Hero Gauge (respecting manual user simulation if currently dragging/active)
+      if (userCustomWifeScore !== null) {
+        renderWifeScore(userCustomWifeScore);
+        updateHeroLiveButton(true);
+      } else {
+        renderWifeScore(compositeScore);
+        updateHeroLiveButton(false);
       }
-
-      // Dynamic Status Copy based on score
-      const { tier: currentTier, vibe: currentVibe, sitrep: currentSitRep } = getIndexData(compositeScore);
-
-      const wifeScoreTier = document.getElementById('wife-score-tier');
-      if (wifeScoreTier) wifeScoreTier.textContent = currentTier.title;
-      
-      const wifeScoreDesc = document.getElementById('wife-score-desc');
-      if (wifeScoreDesc) wifeScoreDesc.textContent = currentVibe;
-      
-      const threatTitle = document.getElementById('threat-title');
-      if (threatTitle) threatTitle.textContent = currentTier.threat;
-      
-      const threatP1 = document.getElementById('threat-p1');
-      if (threatP1) threatP1.textContent = currentSitRep;
-      
-      const householdOrder = document.getElementById('household-order');
-      if (householdOrder) householdOrder.textContent = `"${currentTier.order}"`;
 
       // Update remaining divisions
       updateGarageMiningMetrics();
@@ -5992,6 +6137,7 @@
     }
 
     // Initial setup and immediate rendering
+    initGaugeDragControls();
     populatePresetDropdowns();
     updateRotatingMetrics();
     updateSocialMetrics();

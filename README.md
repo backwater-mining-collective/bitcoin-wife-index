@@ -1,8 +1,8 @@
-# Bitcoin Wife Index (BWI)
+# Wife Index (WI)
 
 A satirical, quantitatively rigorous real-time dashboard mapping live Bitcoin on-chain and market telemetry to domestic marital sentiment, garage acoustics, and household purchasing power.
 
-![Bitcoin Wife Index Preview](https://img.shields.io/badge/Domestic_Threat_Level-Tolerated_Whine-brightgreen?style=for-the-badge)
+![Wife Index Preview](https://img.shields.io/badge/Domestic_Threat_Level-Tolerated_Whine-brightgreen?style=for-the-badge)
 ![Network Status](https://img.shields.io/badge/Issuance-Epoch_5_3.125_BTC-orange?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 
@@ -10,7 +10,7 @@ A satirical, quantitatively rigorous real-time dashboard mapping live Bitcoin on
 
 ## Overview
 
-The **Bitcoin Wife Index** pulls real-time market and network data from public endpoints (Mempool.space, Alternative.me Fear & Greed, CoinGecko) and translates serious macroeconomic signals into domestic reality:
+The **Wife Index** (`wifeindex.com`) pulls real-time market and network data from public endpoints (Mempool.space, Alternative.me Fear & Greed, CoinGecko) and translates serious macroeconomic signals into domestic reality:
 
 * **Composite Wife Index Score (0–100):** Real-time weighted needle tracking marital tension vs. market momentum.
 * **Garage Decibel & Heat Permit:** Computes fan noise tolerance vs. network hashprice economics ($/TH/day).

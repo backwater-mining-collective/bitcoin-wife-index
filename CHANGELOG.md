@@ -1,15 +1,19 @@
-# Bitcoin Wife Index (BWI) — Development & Changelog
+# Wife Index (WI) — Development & Changelog
 
 ## Project Summary
 A real-time satirical yet quantitatively sound dashboard tracking Bitcoin network and market telemetry translated into domestic marital sentiment, garage acoustics, and household purchasing power.
 
 * **Repository:** `backwater-mining-collective/bitcoin-wife-index` (GitHub Pages)
 * **Custom Domain:** `wifeindex.com` (CNAME provisioned)
-* **Local Path:** `/Users/nick/projects/wife-index`
 
 ---
 
 ## Change History & Milestones
+
+### 2026-08-22: Name Update to "Wife Index" (WI)
+* Streamlined the masthead and branding to **WIFE INDEX** across `index.html`, `index.cabin.html`, and `README.md`.
+* Updated the header logo badge from `BWI` to `WI`.
+* Re-rendered favicon assets (`favicon.svg`, `favicon.png`, `favicon.ico`) with the **WI** monogram.
 
 ### 2026-08-22: Full Dashboard Build, Custom Domain, & Deployment
 1. **Interactive Metric Inputs & Live Resets**
@@ -39,7 +43,7 @@ A real-time satirical yet quantitatively sound dashboard tracking Bitcoin networ
    * Footer updated with a styled GitHub logo button linking to the repository.
 
 4. **Repository & Hosting Setup**
-   * Initialized git repository with sanitized commit author `Nickamoto <nick@backwatermining.com>`.
+   * Initialized git repository with verified commit author.
    * Created public GitHub repository: `backwater-mining-collective/bitcoin-wife-index`.
    * Added `CNAME` configured for `wifeindex.com` and activated GitHub Pages.
    * Sanitization audit passed: 100% clean of private local paths, IPs, or credentials.
